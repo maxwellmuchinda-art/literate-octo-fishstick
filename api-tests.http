@@ -1,0 +1,67 @@
+### Step 7 tests - use with the VS Code "REST Client" extension (or copy into Postman).
+### Change @base to your Render URL to repeat the tests on the hosted API.
+@base = http://localhost:3000
+
+### 1. Health -> 200
+GET {{base}}/health
+
+### 2. Read all -> 200 and an array
+GET {{base}}/api/records
+
+### 3. Create -> 201 (note the returned id)
+POST {{base}}/api/records
+Content-Type: application/json
+
+{
+  "title": "Cracked window pane",
+  "category": "Doors and Windows",
+  "description": "The window in Room C2 has a crack across the glass.",
+  "status": "Pending"
+}
+
+### 4. Read one -> 200 (change 10 to the id you got)
+GET {{base}}/api/records/10
+
+### 5. Update -> 200, same id
+PUT {{base}}/api/records/10
+Content-Type: application/json
+
+{
+  "title": "Cracked window pane",
+  "category": "Doors and Windows",
+  "description": "The window in Room C2 has a crack across the glass.",
+  "status": "In progress"
+}
+
+### 6. Delete -> 200 {"message":"Record deleted."}
+DELETE {{base}}/api/records/10
+
+### 7. Read the deleted id -> 404
+GET {{base}}/api/records/10
+
+### 8. Missing title -> 400
+POST {{base}}/api/records
+Content-Type: application/json
+
+{ "category": "Electrical", "description": "No title was sent.", "status": "Pending" }
+
+### 9. Invalid status -> 400
+POST {{base}}/api/records
+Content-Type: application/json
+
+{ "title": "Bad status", "category": "Electrical", "description": "Status is wrong.", "status": "Done" }
+
+### 10. Malformed JSON -> 400
+POST {{base}}/api/records
+Content-Type: application/json
+
+{ "title": "oops",
+
+### 11. Invalid id -> 400
+GET {{base}}/api/records/abc
+
+### 12. Valid id that does not exist -> 404 (also try PUT and DELETE)
+GET {{base}}/api/records/99999
+
+### 13. Unknown route -> 404 JSON
+GET {{base}}/nothing-here
